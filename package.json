@@ -1,11 +1,21 @@
 {
-  "name": "vidsrc.extractor.module",
-  "version": "0.0.0",
+  "name": "vidsrc-api",
+  "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "cheerio": "^1.0.0"
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
-    "typescript": "5.2.2"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3"
   }
 }
