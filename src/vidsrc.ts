@@ -1,13 +1,3 @@
-/*
-written by @cool-dev-guy
-github: https://github.com/cool-dev-guy
-*/
-
-/*
-NOTES: The current code is compatible to use as a module in nodejs projects.
-import * as cheerio from "cheerio"; // FOR NODE.JS
-import * as cheerio from "npm:cheerio"; // FOR DENO
-*/
 import * as cheerio from "cheerio";
 import { decrypt } from "./helpers/decoder.js";
 import fetch from 'node-fetch';
