@@ -1,7 +1,8 @@
-Platform	Free Tier	Express Support	Persistent	Ideal For
-Vercel	✅	☑️ (with adapter)	❌	React + serverless API
-Render	✅	✅	✅	Full Express backend
-Cyclic	✅	✅	✅	APIs with GitHub integration
-Fly.io	✅	✅	✅	Distributed low-latency apps
-Glitch	✅	✅	⚠️	Quick testing
-Replit	✅	✅	✅	Lightweight API hosting
+Platform	Free Tier	Express Support		Persistent	Ideal For
+
+Vercel		✅		☑️ 			❌		React + serverless API
+Render		✅		✅			✅		Full Express backend
+Cyclic		✅		✅			✅		APIs with GitHub integration
+Fly.io		✅		✅			✅		Distributed low-latency apps
+Glitch		✅		✅			⚠️		Quick testing
+Replit		✅		✅			✅		Lightweight API hosting
