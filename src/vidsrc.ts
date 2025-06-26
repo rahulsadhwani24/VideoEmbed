@@ -1,6 +1,5 @@
 import * as cheerio from "cheerio";
 import { decrypt } from "./helpers/decoder.js";
-import fetch from 'node-fetch';
 
 let BASEDOM = "https://whisperingauroras.com";
 
@@ -41,45 +40,65 @@ async function serversLoad(html: string): Promise<{ servers: Servers[]; title: s
 }
 async function SRCRCPhandler() {
 }
-async function PRORCPhandler(prorcp: string): Promise<string | null> {
-  const prorcpFetch = await fetch(`${BASEDOM}/prorcp/${prorcp}`);
-  const prorcpResponse = await prorcpFetch.text();
 
-  const scripts = prorcpResponse.match(/<script\s+src="\/([^"]*\.js)\?\_=([^"]*)"><\/script>/gm);
-  const script = (scripts?.[scripts.length - 1].includes("cpt.js"))
-    ? scripts?.[scripts.length - 2].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2")
-    : scripts?.[scripts.length - 1].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2");
-  const jsFileReq = await fetch(
-    `${BASEDOM}/${script}`,
-    {
-      "headers": {
-        "accept": "*/*",
-        "accept-language": "en-US,en;q=0.9",
-        "priority": "u=1",
-        "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "\"Windows\"",
-        "sec-fetch-dest": "script",
-        "sec-fetch-mode": "no-cors",
-        "sec-fetch-site": "same-origin",
-        "Referer": `${BASEDOM}/`,
-        "Referrer-Policy": "origin",
-      },
-      "body": null,
-      "method": "GET",
-    },
-  );
-  const jsCode = await jsFileReq.text();
-  const decryptRegex = /{}\}window\[([^"]+)\("([^"]+)"\)/;
-  const decryptMatches = jsCode.match(decryptRegex);
-  // ^ this func is the decrypt function (fn name)
-  const $ = cheerio.load(prorcpResponse);
-  if (!decryptMatches || decryptMatches?.length < 3) return null;
-  const id = decrypt(decryptMatches[2].toString().trim(), decryptMatches[1].toString().trim());
-  const data = $("#" + id);
-  const result = await decrypt(await data.text(), decryptMatches[2].toString().trim());
-  return result;
+// async function PRORCPhandler(prorcp: string): Promise<string | null> {
+//   const prorcpFetch = await fetch(`${BASEDOM}/prorcp/${prorcp}`);
+//   const prorcpResponse = await prorcpFetch.text();
+
+//   const scripts = prorcpResponse.match(/<script\s+src="\/([^"]*\.js)\?\_=([^"]*)"><\/script>/gm);
+//   const script = (scripts?.[scripts.length - 1].includes("cpt.js"))
+//     ? scripts?.[scripts.length - 2].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2")
+//     : scripts?.[scripts.length - 1].replace(/.*src="\/([^"]*\.js)\?\_=([^"]*)".*/, "$1?_=$2");
+//   const jsFileReq = await fetch(
+//     `${BASEDOM}/${script}`,
+//     {
+//       "headers": {
+//         "accept": "*/*",
+//         "accept-language": "en-US,en;q=0.9",
+//         "priority": "u=1",
+//         "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
+//         "sec-ch-ua-mobile": "?0",
+//         "sec-ch-ua-platform": "\"Windows\"",
+//         "sec-fetch-dest": "script",
+//         "sec-fetch-mode": "no-cors",
+//         "sec-fetch-site": "same-origin",
+//         "Referer": `${BASEDOM}/`,
+//         "Referrer-Policy": "origin",
+//       },
+//       "body": null,
+//       "method": "GET",
+//     },
+//   );
+//   const jsCode = await jsFileReq.text();
+//   const decryptRegex = /{}\}window\[([^"]+)\("([^"]+)"\)/;
+
+//   console.log(prorcpResponse);
+//   console.log(jsCode);
+
+//   const decryptMatches = jsCode.match(decryptRegex);
+//   // ^ this func is the decrypt function (fn name)
+//   const $ = cheerio.load(prorcpResponse);
+//   if (!decryptMatches || decryptMatches?.length < 3) return null;
+//   const id = decrypt(decryptMatches[2].toString().trim(), decryptMatches[1].toString().trim());
+//   const data = $("#" + id);
+//   const result = await decrypt(await data.text(), decryptMatches[2].toString().trim());
+//   return result;
+// }
+
+async function PRORCPhandler(prorcp: string): Promise<string | null> {
+  const response = await fetch(`${BASEDOM}/prorcp/${prorcp}`);
+  const html = await response.text();
+
+  // Regex to capture the m3u8 link
+  const match = html.match(/file:\s*'([^']+\.m3u8)'/);
+  if (!match) {
+    console.error("No m3u8 stream found in the page.");
+    return null;
+  }
+
+  return match[1];
 }
+
 
 async function rcpGrabber(html: string): Promise<RCPResponse | null> {
   const regex = /src:\s*'([^']*)'/;
@@ -132,3 +151,8 @@ async function tmdbScrape(tmdbId: string, type: "movie" | "tv", season?: number,
   return apiResponse;
 }
 export default tmdbScrape;
+
+
+
+
+console.log(await tmdbScrape("76479", "tv",1,1));
